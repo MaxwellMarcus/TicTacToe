@@ -147,6 +147,11 @@ while True:
         canvas.create_text(175,325,text=text,font=('TkTextFont',20))
 
         #draw board
+        canvas.create_line(150,0,150,450,width=4)
+        canvas.create_line(300,0,300,450,width=4)
+        canvas.create_line(0,150,450,150,width=4)
+        canvas.create_line(0,300,450,300,width=4)
+
         for i in range(3):
             for l in range(3):
                 x = i*150
@@ -157,7 +162,31 @@ while True:
                 canvas.create_line(x+100,y+5,x+100,y+145,width=4)
 
         for i in mb.boards:
-            for j in i.
+            for j in i:
+                for k in j.tiles:
+                    for h in k:
+                        bx = i.index(j)*150
+                        by = mb.boards.index(i)*150
+                        x = bx + k.index(h)*50+25
+                        y = by + j.tiles.index(k)*50+25
+
+                        if h.value == 'o':
+                            canvas.create_oval(x-10,y-10,x+10,y+10)
+                        if h.value == 'x':
+                            canvas.create_line(x-7,y-7,x+7,y+7)
+                            canvas.create_line(x-7,y+7,x+7,y-7)
+
+        if clicking:
+            x = mouse_x//50
+            y = mouse_y//50
+
+            mbx = (x+1)//3-1
+            mby = (y+1)//3-1
+
+            bx = (x)%3
+            by = (y)%3
+
+            mb.boards[mby][mbx].tiles[by][bx].value = 'x'
 
         root.update()
     except TclError:
