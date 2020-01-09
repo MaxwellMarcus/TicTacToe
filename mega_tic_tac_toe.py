@@ -4,12 +4,27 @@ except ImportError:
     from Tkinter import *
 
 root = Tk()
-canvas = Canvas(root,width=350,height=350)
+canvas = Canvas(root,width=950,height=950)
 canvas.pack()
 
-board = [['','',''],
-         ['','',''],
-         ['','','']]
+class Tile:
+    def __init__(self):
+        self.value = ''
+
+class Board:
+    def __init__(self):
+        self.tiles = [[Tile(),Tile(),Tile()],
+                      [Tile(),Tile(),Tile()],
+                      [Tile(),Tile(),Tile()]]
+        self.winner = ''
+
+class Mega_Board:
+    def __init__(self):
+        self.boards = [[Board(),Board(),Board()],
+                       [Board(),Board(),Board()],
+                       [Board(),Board(),Board()]]
+        self.winner = ''
+
 mouse_x = 0
 mouse_y = 0
 clicking = False
@@ -122,6 +137,8 @@ def click(event):
 
 root.bind('<Button-1>',click)
 
+mb = Mega_Board()
+
 while True:
     try:
         canvas.delete(ALL)
@@ -130,57 +147,17 @@ while True:
         canvas.create_text(175,325,text=text,font=('TkTextFont',20))
 
         #draw board
-        canvas.create_line(100,0,100,300,width=4)
-        canvas.create_line(200,0,200,300,width=4)
-        canvas.create_line(0,100,300,100,width=4)
-        canvas.create_line(0,200,300,200,width=4)
+        for i in range(3):
+            for l in range(3):
+                x = i*150
+                y = l*150
+                canvas.create_line(x+5,y+50,x+145,y+50,width=4)
+                canvas.create_line(x+10,y+100,x+145,y+100,width=4)
+                canvas.create_line(x+50,y+5,x+50,y+145,width=4)
+                canvas.create_line(x+100,y+5,x+100,y+145,width=4)
 
-        #draw peices
-        for x in range(len(board)):
-            for y in range(len(board[x])):
-                if board[x][y] == 'x':
-                    draw_x((len(board)-x)*100-50,(len(board[x])-y)*100-50)
-                if board[x][y] == 'o':
-                    draw_o((len(board)-x)*100-50,(len(board[x])-y)*100-50)
-
-        #place peices
-        if clicking and not winner and turn == 'x':
-            x = int(mouse_x/100)
-            y = int(mouse_y/100)
-            bx = len(board)-x-1
-            by = len(board)-y-1
-
-            text = ''
-
-            if board[by][bx] == '':
-                board[by][bx] = turn
-
-                turn = 'o'
-
-            else:
-                text = 'That space is already taken!'
-
-            clicking = False
-
-        elif turn == 'o' and not winner:
-            AI_move()
-            turn = 'x'
-
-        if has_won('x',board):
-            text = 'X has won!'
-            winner = 'x'
-        if has_won('o',board):
-            winner = 'o'
-            text = 'O has won!'
-
-        full = True
-        for i in board:
-            for j in i:
-                if  j == '':
-                    full = False
-        if full:
-            winner = 'tie'
-            text = 'Its a tie!'
+        for i in mb.boards:
+            for j in i.
 
         root.update()
     except TclError:
