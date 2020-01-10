@@ -4,7 +4,7 @@ except ImportError:
     from Tkinter import *
 
 root = Tk()
-canvas = Canvas(root,width=950,height=950)
+canvas = Canvas(root,width=450,height=450)
 canvas.pack()
 
 class Tile:
@@ -24,6 +24,8 @@ class Mega_Board:
                        [Board(),Board(),Board()],
                        [Board(),Board(),Board()]]
         self.winner = ''
+        self.available_board = 'any'
+        self.turn = 'x'
 
 mouse_x = 0
 mouse_y = 0
@@ -131,8 +133,8 @@ def mini_max(turn,depth):
 
 def click(event):
     global mouse_x,mouse_y,clicking
-    mouse_x = event.y
-    mouse_y = event.x
+    mouse_x = event.x
+    mouse_y = event.y
     clicking = True
 
 root.bind('<Button-1>',click)
@@ -177,16 +179,26 @@ while True:
                             canvas.create_line(x-7,y+7,x+7,y-7)
 
         if clicking:
+            clicking = False
+
             x = mouse_x//50
             y = mouse_y//50
 
-            mbx = (x+1)//3-1
-            mby = (y+1)//3-1
+            mbx = (x)//3
+            mby = (y)//3
 
             bx = (x)%3
             by = (y)%3
 
-            mb.boards[mby][mbx].tiles[by][bx].value = 'x'
+            if mbx <= 2 and mby <= 2:
+                if mb.boards[mby][mbx] == mb.available_board or mb.available_board == 'any':
+                    if mb.boards[mby][mbx].tiles[by][bx].value == '':
+                        mb.boards[mby][mbx].tiles[by][bx].value = mb.turn
+                        mb.available_board = mb.boards[by][bx]
+                        if mb.turn == 'x':
+                            mb.turn = 'o'
+                        else:
+                            mb.turn = 'x'
 
         root.update()
     except TclError:
